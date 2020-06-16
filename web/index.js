@@ -6,9 +6,9 @@ import "react-image-crop/dist/ReactCrop.css";
 import "regenerator-runtime/runtime";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faImage } from "@fortawesome/free-solid-svg-icons";
-
 import ImageSelector from "./components/ImageSelector";
 import CroppedImagePreview from "./components/CroppedImagePreview";
+import FullscreenImageModel from "./components/FullscreenImageModal";
 
 import axios from "axios";
 class AppComponent extends React.Component {
@@ -181,7 +181,7 @@ class AppComponent extends React.Component {
               <article className="tile is-child box">
                 <p className="subtitle">Computed energy</p>
                 <div className="is-flex is-horizontal-center">
-                  <form>
+                  <div>
                     <div className="field is-fullwidth">
                       <figure className="image">
                         <img
@@ -191,12 +191,12 @@ class AppComponent extends React.Component {
                         ></img>
                       </figure>
                     </div>
-                    <div className="field is-expanded">
-                      <button class="button is-light is-fullwidth">
-                        Open larger
-                      </button>
-                    </div>
-                  </form>
+                    <FullscreenImageModel
+                      imageUrl={
+                        processedImages ? processedImages.energy_url : ""
+                      }
+                    />
+                  </div>
                 </div>
               </article>
             </div>
@@ -204,7 +204,7 @@ class AppComponent extends React.Component {
               <article className="tile is-child box">
                 <p className="subtitle">Optimal seams based on energy</p>
                 <div className="is-flex is-horizontal-center">
-                  <form>
+                  <div>
                     <div className="field is-fullwidth">
                       <figure className="image">
                         <img
@@ -216,12 +216,12 @@ class AppComponent extends React.Component {
                         ></img>
                       </figure>
                     </div>
-                    <div className="field is-expanded">
-                      <button class="button is-light is-fullwidth">
-                        Open larger
-                      </button>
-                    </div>
-                  </form>
+                    <FullscreenImageModel
+                      imageUrl={
+                        processedImages ? processedImages.marked_energy_url : ""
+                      }
+                    />
+                  </div>
                 </div>
               </article>
             </div>
@@ -231,7 +231,7 @@ class AppComponent extends React.Component {
                   Optimal seams drawn on original image
                 </p>
                 <div className="is-flex is-horizontal-center">
-                  <form>
+                  <div>
                     <div className="field is-fullwidth">
                       <figure className="image">
                         <img
@@ -243,12 +243,14 @@ class AppComponent extends React.Component {
                         ></img>
                       </figure>
                     </div>
-                    <div className="field is-expanded">
-                      <button class="button is-light is-fullwidth">
-                        Open larger
-                      </button>
-                    </div>
-                  </form>
+                    <FullscreenImageModel
+                      imageUrl={
+                        processedImages
+                          ? processedImages.original_marked_url
+                          : ""
+                      }
+                    />
+                  </div>
                 </div>
               </article>
             </div>
