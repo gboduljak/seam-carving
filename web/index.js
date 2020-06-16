@@ -1,17 +1,101 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import ReactCrop from "react-image-crop";
-
 import "bulma/css/bulma.css";
 import "./styles.css";
 import "react-image-crop/dist/ReactCrop.css";
-
+import "regenerator-runtime/runtime";
+import DimensionsSelector from "./components/DimensionsSelector";
+import axios from "axios";
 class AppComponent extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      processedImages: undefined,
+      processed: undefined,
+      processing: undefined,
+      processingRequest: null,
+      crop: null,
+      dimensions: null,
+    };
+  }
+
+  processSelectedImage() {
+    const { processingRequest } = this.state;
+
+    if (!processingRequest) return;
+
+    this.setState({ processing: true, processed: false });
+    axios
+      .post("http://localhost:5000/resize", processingRequest)
+      .then((response) => {
+        const [
+          original_url,
+          cropped_url,
+          original_marked_url,
+          energy_url,
+          marked_energy_url,
+        ] = response.data.processed_images;
+
+        this.setState({
+          processedImages: {
+            original_url,
+            cropped_url,
+            original_marked_url,
+            energy_url,
+            marked_energy_url,
+          },
+        });
+        this.setState({ processing: false, processed: true });
+      });
   }
 
   render() {
+    const {
+      processed,
+      processedImages,
+      processing,
+      processingRequest,
+      dimensions,
+      crop,
+    } = this.state;
+    console.log(this.state);
+    const processButton =
+      !processing && processingRequest ? (
+        <button
+          className="button is-primary"
+          onClick={() => {
+            this.processSelectedImage();
+          }}
+        >
+          Resize
+        </button>
+      ) : (
+        <div></div>
+      );
+
+    const progressBar = processing ? (
+      <progress className="progress is-primary" max="100">
+        40%
+      </progress>
+    ) : (
+      <div></div>
+    );
+
+    const currentDimensions = dimensions ? (
+      <span>
+        Current dimensions : ({dimensions.width}, {dimensions.height})
+      </span>
+    ) : (
+      <div></div>
+    );
+
+    const cropDimensions = crop ? (
+      <span>
+        New dimensions : ({crop.width}, {crop.height})
+      </span>
+    ) : (
+      <div></div>
+    );
     return (
       <div>
         <section className="hero is-primary">
@@ -29,39 +113,120 @@ class AppComponent extends React.Component {
             style={{ margin: "0px auto" }}
           >
             <article className="tile is-child box">
-              <p className="title">Select an image...</p>
-              <p className="subtitle">Image editor will appear here.</p>
+              <div className="is-flex is-horizontal-center">
+                <br />
+                <form>
+                  <div class="field is-grouped is-grouped-centered">
+                    <p class="control">
+                      <p className="control is-fullwidth">
+                        {currentDimensions}
+                      </p>
+                      <p className="control is-fullwidth">{cropDimensions}</p>
+                    </p>
+                    <p class="control">
+                      <p className="control is-fullwidth">{processButton} </p>
+                    </p>
+                  </div>
+
+                  <div className="field">
+                    <DimensionsSelector
+                      croppedImageUrl={
+                        processedImages ? processedImages.cropped_url : null
+                      }
+                      onDimensionsSelected={({ model, crop, dimensions }) => {
+                        this.setState({
+                          processingRequest: model,
+                          crop,
+                          dimensions,
+                        });
+                      }}
+                    />
+                  </div>
+                  <div className="field">
+                    <div className="control">{progressBar}</div>
+                  </div>
+                </form>
+              </div>
             </article>
           </div>
           <br />
-          <div className="tile is-ancestor">
+
+          <div
+            className="tile is-ancestor"
+            style={{ display: !processed ? "none" : "flex" }}
+          >
             <div className="tile is-parent has-text-centered">
               <article className="tile is-child box">
-                <p className="subtitle">1. Image edge detection</p>
+                <p className="subtitle">Computed energy</p>
                 <div className="is-flex is-horizontal-center">
-                  <figure className="image is-128x128 ">
-                    <img src="https://bulma.io/images/placeholders/128x128.png"></img>
-                  </figure>
+                  <form>
+                    <div className="field is-fullwidth">
+                      <figure className="image">
+                        <img
+                          src={
+                            processedImages ? processedImages.energy_url : ""
+                          }
+                        ></img>
+                      </figure>
+                    </div>
+                    <div className="field is-expanded">
+                      <button class="button is-light is-fullwidth">
+                        Open larger
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </article>
             </div>
             <div className="tile is-parent has-text-centered">
               <article className="tile is-child box">
-                <p className="subtitle">2. Optimal seam computation</p>
+                <p className="subtitle">Optimal seams based on energy</p>
                 <div className="is-flex is-horizontal-center">
-                  <figure className="image is-128x128 ">
-                    <img src="https://bulma.io/images/placeholders/128x128.png"></img>
-                  </figure>
+                  <form>
+                    <div className="field is-fullwidth">
+                      <figure className="image">
+                        <img
+                          src={
+                            processedImages
+                              ? processedImages.marked_energy_url
+                              : ""
+                          }
+                        ></img>
+                      </figure>
+                    </div>
+                    <div className="field is-expanded">
+                      <button class="button is-light is-fullwidth">
+                        Open larger
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </article>
             </div>
             <div className="tile is-parent has-text-centered">
               <article className="tile is-child box">
-                <p className="subtitle">3. Seam carving</p>
+                <p className="subtitle">
+                  Optimal seams drawn on original image
+                </p>
                 <div className="is-flex is-horizontal-center">
-                  <figure className="image is-128x128 ">
-                    <img src="https://bulma.io/images/placeholders/128x128.png"></img>
-                  </figure>
+                  <form>
+                    <div className="field is-fullwidth">
+                      <figure className="image">
+                        <img
+                          src={
+                            processedImages
+                              ? processedImages.original_marked_url
+                              : ""
+                          }
+                        ></img>
+                      </figure>
+                    </div>
+                    <div className="field is-expanded">
+                      <button class="button is-light is-fullwidth">
+                        Open larger
+                      </button>
+                    </div>
+                  </form>
                 </div>
               </article>
             </div>
