@@ -1,5 +1,6 @@
 import React from "react";
 
+import FullscreenImageModal from "./FullscreenImageModal";
 const CroppedImagePreview = ({ croppedImageUrl, croppedImageName }) => {
   return (
     <div
@@ -17,6 +18,7 @@ const CroppedImagePreview = ({ croppedImageUrl, croppedImageName }) => {
         <div className="field">
           <div class="control">
             <img src={croppedImageUrl}></img>
+            <FullscreenImageModal imageUrl={croppedImageUrl} />
           </div>
         </div>
       </div>

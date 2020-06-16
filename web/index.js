@@ -8,8 +8,8 @@ import "regenerator-runtime/runtime";
 import Header from "./components/Header";
 import ImageSelector from "./components/ImageSelector";
 import CroppedImagePreview from "./components/CroppedImagePreview";
-import FullscreenImageModel from "./components/FullscreenImageModal";
 import ImageResizeService from "./services/ImageResizeService";
+import ImageResultCard from "./components/ImageResultCard";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCrop } from "@fortawesome/free-solid-svg-icons";
 
@@ -52,7 +52,6 @@ class AppComponent extends React.Component {
     this.imageResizeService
       .resizeImage(imageResizeModel)
       .then((resultImages) => {
-        console.log(resultImages);
         this.setState({
           resizeResultImages: resultImages,
           resizing: false,
@@ -71,7 +70,7 @@ class AppComponent extends React.Component {
       crop,
       imageName,
     } = this.state;
-    console.log(this.state);
+
     const processButton =
       !resizing && imageResizeModel ? (
         <button
@@ -124,7 +123,7 @@ class AppComponent extends React.Component {
             <article className="tile is-child box">
               <div className="is-flex is-horizontal-center">
                 <br />
-                <form>
+                <div>
                   <div class="field is-grouped is-grouped-centered">
                     <p class="control">
                       <p className="control is-fullwidth">
@@ -172,7 +171,7 @@ class AppComponent extends React.Component {
                   <div className="field">
                     <div className="control">{progressBar}</div>
                   </div>
-                </form>
+                </div>
               </div>
             </article>
           </div>
@@ -182,87 +181,22 @@ class AppComponent extends React.Component {
             className="tile is-ancestor"
             style={{ display: !resized ? "none" : "flex" }}
           >
-            <div className="tile is-parent has-text-centered">
-              <article className="tile is-child box">
-                <p className="subtitle">Computed energy</p>
-                <div className="is-flex is-horizontal-center">
-                  <div>
-                    <div className="field is-fullwidth">
-                      <figure className="image">
-                        <img
-                          src={
-                            resizeResultImages
-                              ? resizeResultImages.energy_url
-                              : ""
-                          }
-                        ></img>
-                      </figure>
-                    </div>
-                    <FullscreenImageModel
-                      imageUrl={
-                        resizeResultImages ? resizeResultImages.energy_url : ""
-                      }
-                    />
-                  </div>
-                </div>
-              </article>
-            </div>
-            <div className="tile is-parent has-text-centered">
-              <article className="tile is-child box">
-                <p className="subtitle">Optimal seams based on energy</p>
-                <div className="is-flex is-horizontal-center">
-                  <div>
-                    <div className="field is-fullwidth">
-                      <figure className="image">
-                        <img
-                          src={
-                            resizeResultImages
-                              ? resizeResultImages.marked_energy_url
-                              : ""
-                          }
-                        ></img>
-                      </figure>
-                    </div>
-                    <FullscreenImageModel
-                      imageUrl={
-                        resizeResultImages
-                          ? resizeResultImages.marked_energy_url
-                          : ""
-                      }
-                    />
-                  </div>
-                </div>
-              </article>
-            </div>
-            <div className="tile is-parent has-text-centered">
-              <article className="tile is-child box">
-                <p className="subtitle">
-                  Optimal seams drawn on original image
-                </p>
-                <div className="is-flex is-horizontal-center">
-                  <div>
-                    <div className="field is-fullwidth">
-                      <figure className="image">
-                        <img
-                          src={
-                            resizeResultImages
-                              ? resizeResultImages.original_marked_url
-                              : ""
-                          }
-                        ></img>
-                      </figure>
-                    </div>
-                    <FullscreenImageModel
-                      imageUrl={
-                        resizeResultImages
-                          ? resizeResultImages.original_marked_url
-                          : ""
-                      }
-                    />
-                  </div>
-                </div>
-              </article>
-            </div>
+            <ImageResultCard
+              imageUrl={resizeResultImages && resizeResultImages.energy_url}
+              imageName={"Energy computed from the image"}
+            />
+            <ImageResultCard
+              imageUrl={
+                resizeResultImages && resizeResultImages.marked_energy_url
+              }
+              imageName={"Optimal removal seams based on energy"}
+            />
+            <ImageResultCard
+              imageUrl={
+                resizeResultImages && resizeResultImages.original_marked_url
+              }
+              imageName={"Optimal removal seams on the image"}
+            />
           </div>
         </div>
       </div>
