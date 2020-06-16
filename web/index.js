@@ -4,12 +4,18 @@ import "bulma/css/bulma.css";
 import "./styles.css";
 import "react-image-crop/dist/ReactCrop.css";
 import "regenerator-runtime/runtime";
-import DimensionsSelector from "./components/DimensionsSelector";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faImage } from "@fortawesome/free-solid-svg-icons";
+
+import ImageSelector from "./components/ImageSelector";
+import CroppedImagePreview from "./components/CroppedImagePreview";
+
 import axios from "axios";
 class AppComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      imageName: null,
       processedImages: undefined,
       processed: undefined,
       processing: undefined,
@@ -57,6 +63,7 @@ class AppComponent extends React.Component {
       processingRequest,
       dimensions,
       crop,
+      imageName,
     } = this.state;
     console.log(this.state);
     const processButton =
@@ -101,7 +108,10 @@ class AppComponent extends React.Component {
         <section className="hero is-primary">
           <div className="hero-body">
             <div className="container">
-              <h1 className="title">Image seam carving demo</h1>
+              <h1 className="title">
+                <FontAwesomeIcon icon={faImage} />
+                &nbsp; Image seam carving
+              </h1>
               <h2 className="subtitle">Context aware image resizing app</h2>
             </div>
           </div>
@@ -129,17 +139,29 @@ class AppComponent extends React.Component {
                   </div>
 
                   <div className="field">
-                    <DimensionsSelector
+                    <ImageSelector
                       croppedImageUrl={
                         processedImages ? processedImages.cropped_url : null
                       }
-                      onDimensionsSelected={({ model, crop, dimensions }) => {
+                      onDimensionsSelected={({
+                        model,
+                        crop,
+                        dimensions,
+                        imageName,
+                      }) => {
                         this.setState({
                           processingRequest: model,
                           crop,
                           dimensions,
+                          imageName,
                         });
                       }}
+                    />
+                    <CroppedImagePreview
+                      croppedImageUrl={
+                        processedImages ? processedImages.cropped_url : null
+                      }
+                      croppedImageName={imageName}
                     />
                   </div>
                   <div className="field">
