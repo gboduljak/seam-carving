@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 export default class FullscreenImageModal extends Component {
   constructor(props) {
@@ -26,7 +28,10 @@ export default class FullscreenImageModal extends Component {
               this.changeModalActivity({ active: true });
             }}
           >
-            Open larger
+            <span className="icon">
+              <FontAwesomeIcon icon={faArrowRight} />
+            </span>
+            &nbsp; view fullscreen
           </button>
         </div>
         <div class={modalClass}>

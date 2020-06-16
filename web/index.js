@@ -4,83 +4,92 @@ import "bulma/css/bulma.css";
 import "./styles.css";
 import "react-image-crop/dist/ReactCrop.css";
 import "regenerator-runtime/runtime";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faImage } from "@fortawesome/free-solid-svg-icons";
+
+import Header from "./components/Header";
 import ImageSelector from "./components/ImageSelector";
 import CroppedImagePreview from "./components/CroppedImagePreview";
 import FullscreenImageModel from "./components/FullscreenImageModal";
+import ImageResizeService from "./services/ImageResizeService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCrop } from "@fortawesome/free-solid-svg-icons";
 
-import axios from "axios";
+import "./services/ImageResizeService";
+
 class AppComponent extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       imageName: null,
-      processedImages: undefined,
-      processed: undefined,
-      processing: undefined,
-      processingRequest: null,
+      resizeResultImages: undefined,
+      resized: undefined,
+      resizing: undefined,
+      imageResizeModel: null,
       crop: null,
       dimensions: null,
     };
+    this.imageResizeService = new ImageResizeService();
+  }
+
+  resetState() {
+    this.setState({
+      imageName: null,
+      resizeResultImages: undefined,
+      resized: undefined,
+      resizing: undefined,
+      imageResizeModel: null,
+      crop: null,
+      dimensions: null,
+    });
   }
 
   processSelectedImage() {
-    const { processingRequest } = this.state;
+    const { imageResizeModel } = this.state;
 
-    if (!processingRequest) return;
+    if (!imageResizeModel) return;
 
-    this.setState({ processing: true, processed: false });
-    axios
-      .post("http://localhost:5000/resize", processingRequest)
-      .then((response) => {
-        const [
-          original_url,
-          cropped_url,
-          original_marked_url,
-          energy_url,
-          marked_energy_url,
-        ] = response.data.processed_images;
+    this.setState({ resizing: true, resized: false });
 
+    this.imageResizeService
+      .resizeImage(imageResizeModel)
+      .then((resultImages) => {
+        console.log(resultImages);
         this.setState({
-          processedImages: {
-            original_url,
-            cropped_url,
-            original_marked_url,
-            energy_url,
-            marked_energy_url,
-          },
+          resizeResultImages: resultImages,
+          resizing: false,
+          resized: true,
         });
-        this.setState({ processing: false, processed: true });
       });
   }
 
   render() {
     const {
-      processed,
-      processedImages,
-      processing,
-      processingRequest,
+      resized,
+      resizeResultImages,
+      resizing,
+      imageResizeModel,
       dimensions,
       crop,
       imageName,
     } = this.state;
     console.log(this.state);
     const processButton =
-      !processing && processingRequest ? (
+      !resizing && imageResizeModel ? (
         <button
           className="button is-primary"
           onClick={() => {
             this.processSelectedImage();
           }}
         >
-          Resize
+          <span className="icon">
+            <FontAwesomeIcon icon={faCrop} />
+          </span>
+          &nbsp; Resize
         </button>
       ) : (
         <div></div>
       );
 
-    const progressBar = processing ? (
+    const progressBar = resizing ? (
       <progress className="progress is-primary" max="100">
         40%
       </progress>
@@ -105,17 +114,7 @@ class AppComponent extends React.Component {
     );
     return (
       <div>
-        <section className="hero is-primary">
-          <div className="hero-body">
-            <div className="container">
-              <h1 className="title">
-                <FontAwesomeIcon icon={faImage} />
-                &nbsp; Image seam carving
-              </h1>
-              <h2 className="subtitle">Context aware image resizing app</h2>
-            </div>
-          </div>
-        </section>
+        <Header />
         <br />
         <div className="container">
           <div
@@ -137,12 +136,16 @@ class AppComponent extends React.Component {
                       <p className="control is-fullwidth">{processButton} </p>
                     </p>
                   </div>
-
                   <div className="field">
                     <ImageSelector
                       croppedImageUrl={
-                        processedImages ? processedImages.cropped_url : null
+                        resizeResultImages
+                          ? resizeResultImages.cropped_url
+                          : null
                       }
+                      onImageSelected={() => {
+                        this.resetState();
+                      }}
                       onDimensionsSelected={({
                         model,
                         crop,
@@ -150,7 +153,7 @@ class AppComponent extends React.Component {
                         imageName,
                       }) => {
                         this.setState({
-                          processingRequest: model,
+                          imageResizeModel: model,
                           crop,
                           dimensions,
                           imageName,
@@ -159,7 +162,9 @@ class AppComponent extends React.Component {
                     />
                     <CroppedImagePreview
                       croppedImageUrl={
-                        processedImages ? processedImages.cropped_url : null
+                        resizeResultImages
+                          ? resizeResultImages.cropped_url
+                          : null
                       }
                       croppedImageName={imageName}
                     />
@@ -175,7 +180,7 @@ class AppComponent extends React.Component {
 
           <div
             className="tile is-ancestor"
-            style={{ display: !processed ? "none" : "flex" }}
+            style={{ display: !resized ? "none" : "flex" }}
           >
             <div className="tile is-parent has-text-centered">
               <article className="tile is-child box">
@@ -186,14 +191,16 @@ class AppComponent extends React.Component {
                       <figure className="image">
                         <img
                           src={
-                            processedImages ? processedImages.energy_url : ""
+                            resizeResultImages
+                              ? resizeResultImages.energy_url
+                              : ""
                           }
                         ></img>
                       </figure>
                     </div>
                     <FullscreenImageModel
                       imageUrl={
-                        processedImages ? processedImages.energy_url : ""
+                        resizeResultImages ? resizeResultImages.energy_url : ""
                       }
                     />
                   </div>
@@ -209,8 +216,8 @@ class AppComponent extends React.Component {
                       <figure className="image">
                         <img
                           src={
-                            processedImages
-                              ? processedImages.marked_energy_url
+                            resizeResultImages
+                              ? resizeResultImages.marked_energy_url
                               : ""
                           }
                         ></img>
@@ -218,7 +225,9 @@ class AppComponent extends React.Component {
                     </div>
                     <FullscreenImageModel
                       imageUrl={
-                        processedImages ? processedImages.marked_energy_url : ""
+                        resizeResultImages
+                          ? resizeResultImages.marked_energy_url
+                          : ""
                       }
                     />
                   </div>
@@ -236,8 +245,8 @@ class AppComponent extends React.Component {
                       <figure className="image">
                         <img
                           src={
-                            processedImages
-                              ? processedImages.original_marked_url
+                            resizeResultImages
+                              ? resizeResultImages.original_marked_url
                               : ""
                           }
                         ></img>
@@ -245,8 +254,8 @@ class AppComponent extends React.Component {
                     </div>
                     <FullscreenImageModel
                       imageUrl={
-                        processedImages
-                          ? processedImages.original_marked_url
+                        resizeResultImages
+                          ? resizeResultImages.original_marked_url
                           : ""
                       }
                     />

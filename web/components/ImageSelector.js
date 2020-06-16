@@ -1,6 +1,5 @@
 import React from "react";
 
-import CroppedImagePreview from "./CroppedImagePreview";
 import ImageFilePicker from "./ImageFilePicker";
 import ImageDimensionsSelector from "./ImageDimensionsSelector";
 import ImageResizeService from "../services/ImageResizeService";
@@ -32,6 +31,7 @@ export default class ImagesSelector extends React.PureComponent {
       );
       reader.readAsDataURL(selectedFile);
       this.setState({ src: { name: selectedFile.name } });
+      this.props.onImageSelected(this.state.src);
     }
   };
 
@@ -79,7 +79,6 @@ export default class ImagesSelector extends React.PureComponent {
   render() {
     const { crop, src } = this.state;
     const { name, file } = src;
-    const { croppedImageUrl } = this.props;
 
     return (
       <div>
