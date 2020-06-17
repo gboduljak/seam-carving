@@ -261,7 +261,7 @@ There are two projects required to run a demo app:
   - This is a simple rest api exposing the resizing algorithm through REST endpoint /resize. The framework used to build it is Flask.
 - **web**
   - This is a demo application written in React. It communicates with the api and all resizing is done one the server side.
-- It is used to select an image and choose new dimensions. After that application sends the request to the api which does the processing. It is possible to view cropped image, energy map and computed seams for every image.
+  - It is used to select an image and choose new dimensions. After that application sends the request to the api which does the processing. It is possible to view the cropped image, energy map and computed seams for every image.
 
 ## Project setup
 
