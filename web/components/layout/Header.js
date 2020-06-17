@@ -10,7 +10,7 @@ const Header = () => (
           <FontAwesomeIcon icon={faImage} />
           &nbsp; Image seam carving
         </h1>
-        <h2 className="subtitle">Context aware image resizing app</h2>
+        <h2 className="subtitle">context-aware resizing demo app</h2>
       </div>
     </div>
   </section>

@@ -12,7 +12,6 @@ export default class ImageResizeService {
   }
 
   resizeImage(imageResizeModel) {
-    console.log(imageResizeModel);
     return axios
       .post("http://localhost:5000/resize", imageResizeModel)
       .then((response) => {

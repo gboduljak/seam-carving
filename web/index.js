@@ -1,16 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "bulma/css/bulma.css";
-import "./styles.css";
-import "react-image-crop/dist/ReactCrop.css";
 import "regenerator-runtime/runtime";
 
-import Header from "./components/Header";
+import Header from "./components/layout/Header";
 import ImageResizeService from "./services/ImageResizeService";
 import ImageResizingResults from "./components/layout/ImageResizingResults";
 import ImageResizingSelectionArea from "./components/layout/ImageResizingSelectionArea";
-
 import "./services/ImageResizeService";
+
+import "bulma/css/bulma.css";
+import "./styles.css";
+import "react-image-crop/dist/ReactCrop.css";
 
 class AppComponent extends React.Component {
   constructor(props) {
