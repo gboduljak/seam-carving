@@ -100,7 +100,6 @@ Apart from just computing `dp[i][j]`for every subproblem, we store a choice made
 Now, after observing that the topological ordering of problems is very simple, we can translate the above recursive formula directly into the bottom-up loop based implementation.
 
 ```python
-
 @jit
 def compute_optimal_seam(energy):
     rows, cols = energy.shape
@@ -117,8 +116,9 @@ def compute_optimal_seam(energy):
             optimal_adjacent_cost = infinity
             optimal_choice = -1
             adjacents = [
-                ((row + 1, col + 1), DIAGONAL),
-                ((row + 1, col), DOWN)
+                ((row + 1, col - 1), DIAGONAL_LEFT),
+                ((row + 1, col), DOWN),
+                ((row + 1, col + 1), DIAGONAL_RIGHT),
             ]
             for (adjacent, choice) in adjacents:
                 adjacent_row, adjacent_col = adjacent
@@ -135,7 +135,6 @@ def compute_optimal_seam(energy):
     seam_start = (0, seam_start_col)
     seam_cost = dp[0][seam_start_col]
     return (seam_start, seam_cost, next_seam_position)
-
 ```
 
 **Informal complexity analysis**
