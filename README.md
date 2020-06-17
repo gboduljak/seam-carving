@@ -63,6 +63,12 @@ def apply_sobel(image: array):
     return normalised_grad
 
 ```
+<img src="./readme-resources/original.jpeg" alt="algorithm choices" width=500 height=250 />
+<br/>
+<img src="./readme-resources/energy.jpeg" alt="algorithm choices" width=500 height=250/>
+The results of applying Sobel operator to the original image.
+<br/>
+Since the small (3x3) Sobel kernel is susceptible by noise, I have decided to apply the small amount of Gaussian blur prior to the application of the Sobel operator.
 
 ### The optimal seam algorithm
 
