@@ -23,7 +23,7 @@ export default class FullscreenImageModal extends Component {
       <div>
         <div className="field is-expanded">
           <button
-            class="button is-light is-fullwidth"
+            className="button is-light is-fullwidth"
             onClick={() => {
               this.changeModalActivity({ active: true });
             }}
@@ -34,15 +34,15 @@ export default class FullscreenImageModal extends Component {
             &nbsp; view fullscreen
           </button>
         </div>
-        <div class={modalClass}>
-          <div class="modal-background"></div>
-          <div class="modal-content">
-            <p class="image is-4by3">
+        <div className={modalClass}>
+          <div className="modal-background"></div>
+          <div className="modal-content">
+            <p className="image is-4by3">
               <img src={imageUrl}></img>
             </p>
           </div>
           <button
-            class="modal-close is-large"
+            className="modal-close is-large"
             aria-label="close"
             onClick={() => {
               this.changeModalActivity({ active: false });

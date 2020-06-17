@@ -6,12 +6,9 @@ import "react-image-crop/dist/ReactCrop.css";
 import "regenerator-runtime/runtime";
 
 import Header from "./components/Header";
-import ImageSelector from "./components/ImageSelector";
-import CroppedImagePreview from "./components/CroppedImagePreview";
 import ImageResizeService from "./services/ImageResizeService";
-import ImageResultCard from "./components/ImageResultCard";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCrop } from "@fortawesome/free-solid-svg-icons";
+import ImageResizingResults from "./components/layout/ImageResizingResults";
+import ImageResizingSelectionArea from "./components/layout/ImageResizingSelectionArea";
 
 import "./services/ImageResizeService";
 
@@ -42,7 +39,7 @@ class AppComponent extends React.Component {
     });
   }
 
-  processSelectedImage() {
+  resizeImage() {
     const { imageResizeModel } = this.state;
 
     if (!imageResizeModel) return;
@@ -60,142 +57,43 @@ class AppComponent extends React.Component {
       });
   }
 
-  render() {
-    const {
-      resized,
-      resizeResultImages,
-      resizing,
-      imageResizeModel,
-      dimensions,
+  onDimensionsSelected = ({ model, crop, dimensions, imageName }) => {
+    this.setState({
+      imageResizeModel: model,
       crop,
+      dimensions,
       imageName,
-    } = this.state;
+    });
+  };
 
-    const processButton =
-      !resizing && imageResizeModel ? (
-        <button
-          className="button is-primary"
-          onClick={() => {
-            this.processSelectedImage();
-          }}
-        >
-          <span className="icon">
-            <FontAwesomeIcon icon={faCrop} />
-          </span>
-          &nbsp; Resize
-        </button>
-      ) : (
-        <div></div>
-      );
+  onImageSelected = () => {
+    this.resetState();
+  };
 
-    const progressBar = resizing ? (
-      <progress className="progress is-primary" max="100">
-        40%
-      </progress>
-    ) : (
-      <div></div>
-    );
+  onImageResizeStart = () => {
+    this.resizeImage();
+  };
 
-    const currentDimensions = dimensions ? (
-      <span>
-        Current dimensions : ({dimensions.width}, {dimensions.height})
-      </span>
-    ) : (
-      <div></div>
-    );
+  render() {
+    const { resized, resizeResultImages } = this.state;
 
-    const cropDimensions = crop ? (
-      <span>
-        New dimensions : ({crop.width}, {crop.height})
-      </span>
-    ) : (
-      <div></div>
-    );
     return (
       <div>
         <Header />
         <br />
         <div className="container">
-          <div
-            className="tile is-ancestor has-text-centered"
-            style={{ margin: "0px auto" }}
-          >
-            <article className="tile is-child box">
-              <div className="is-flex is-horizontal-center">
-                <br />
-                <div>
-                  <div class="field is-grouped is-grouped-centered">
-                    <p class="control">
-                      <p className="control is-fullwidth">
-                        {currentDimensions}
-                      </p>
-                      <p className="control is-fullwidth">{cropDimensions}</p>
-                    </p>
-                    <p class="control">
-                      <p className="control is-fullwidth">{processButton} </p>
-                    </p>
-                  </div>
-                  <div className="field">
-                    <ImageSelector
-                      croppedImageUrl={
-                        resizeResultImages
-                          ? resizeResultImages.cropped_url
-                          : null
-                      }
-                      onImageSelected={() => {
-                        this.resetState();
-                      }}
-                      onDimensionsSelected={({
-                        model,
-                        crop,
-                        dimensions,
-                        imageName,
-                      }) => {
-                        this.setState({
-                          imageResizeModel: model,
-                          crop,
-                          dimensions,
-                          imageName,
-                        });
-                      }}
-                    />
-                    <CroppedImagePreview
-                      croppedImageUrl={
-                        resizeResultImages
-                          ? resizeResultImages.cropped_url
-                          : null
-                      }
-                      croppedImageName={imageName}
-                    />
-                  </div>
-                  <div className="field">
-                    <div className="control">{progressBar}</div>
-                  </div>
-                </div>
-              </div>
-            </article>
+          <div className="tile is-ancestor has-text-centered">
+            <ImageResizingSelectionArea
+              state={this.state}
+              onImageResizeStart={this.onImageResizeStart}
+              onImageSelected={this.onImageSelected}
+              onDimensionsSelected={this.onDimensionsSelected}
+            />
           </div>
-          <br />
-
-          <div
-            className="tile is-ancestor"
-            style={{ display: !resized ? "none" : "flex" }}
-          >
-            <ImageResultCard
-              imageUrl={resizeResultImages && resizeResultImages.energy_url}
-              imageName={"Energy computed from the image"}
-            />
-            <ImageResultCard
-              imageUrl={
-                resizeResultImages && resizeResultImages.marked_energy_url
-              }
-              imageName={"Optimal removal seams based on energy"}
-            />
-            <ImageResultCard
-              imageUrl={
-                resizeResultImages && resizeResultImages.original_marked_url
-              }
-              imageName={"Optimal removal seams on the image"}
+          <div>
+            <ImageResizingResults
+              resized={resized}
+              resizeResultImages={resizeResultImages}
             />
           </div>
         </div>
