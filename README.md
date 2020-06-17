@@ -89,7 +89,7 @@ For the sake of simplicity, we will consider only vertical seams in this discuss
 
 <img src="./readme-resources/choices.png" alt="algorithm choices" width=250 height=250 />
 
-We can solve the seam computation problem using dynamic programming after observing a key important characteristic of the problem:
+We can solve the seam computation problem using dynamic programming after observing an important characteristic of the problem:
 
 - **Optimal substructure**
 
