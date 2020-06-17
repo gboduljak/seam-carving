@@ -30,7 +30,7 @@ def resize():
 
     image_data = re.sub('^data:image/.+;base64,', '', request.form['image'])
     image = Image.open(BytesIO(base64.b64decode(image_data))).convert('RGB')
-    print(image)
+
     [crop_rows, crop_cols] = [
         int(request.form['crop_rows']),
         int(request.form['crop_cols'])

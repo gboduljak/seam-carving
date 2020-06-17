@@ -1,7 +1,7 @@
 from numpy import ones, stack, array, rot90
 from numba import jit
 from PIL import Image
-from algorithm import apply_sobel, compute_optimal_seam, DIAGONAL
+from algorithm import apply_sobel, compute_optimal_seam, DIAGONAL_LEFT, DIAGONAL_RIGHT
 
 
 @jit
@@ -14,7 +14,9 @@ def trace_seam(mask, original_image, energy_image, seam_start, next_seam_positio
         energy_image[row][col] = (255, 0, 0)
         if (next_seam_position[row][col] == 0):
             break
-        if (next_seam_position[row][col] == DIAGONAL):
+        if (next_seam_position[row][col] == DIAGONAL_LEFT):
+            seam_pos = (row + 1, col - 1)
+        elif (next_seam_position[row][col] == DIAGONAL_RIGHT):
             seam_pos = (row + 1, col + 1)
         else:
             seam_pos = (row + 1, col)

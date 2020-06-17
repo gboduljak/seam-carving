@@ -25,8 +25,9 @@ gaussian_kernel = (1/16) * array([
     [1, 2, 1]
 ])
 
-DIAGONAL = numpy.intp(1)
+DIAGONAL_LEFT = numpy.intp(1)
 DOWN = numpy.intp(2)
+DIAGONAL_RIGHT = numpy.intp(3)
 
 
 def apply_sobel(image: array):
@@ -62,8 +63,9 @@ def compute_optimal_seam(energy):
             optimal_adjacent_cost = infinity
             optimal_choice = -1
             adjacents = [
-                ((row + 1, col + 1), DIAGONAL),
-                ((row + 1, col), DOWN)
+                ((row + 1, col - 1), DIAGONAL_LEFT),
+                ((row + 1, col), DOWN),
+                ((row + 1, col + 1), DIAGONAL_RIGHT),
             ]
             for (adjacent, choice) in adjacents:
                 adjacent_row, adjacent_col = adjacent

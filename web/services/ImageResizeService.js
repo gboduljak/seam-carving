@@ -6,8 +6,14 @@ export default class ImageResizeService {
     const seamCarvingFormData = new FormData();
     const { width, height } = dimensions;
     seamCarvingFormData.set("image", file);
-    seamCarvingFormData.set("crop_rows", parseInt(50));
-    seamCarvingFormData.set("crop_cols", parseInt(150));
+    seamCarvingFormData.set(
+      "crop_rows",
+      parseInt(height) - parseInt(crop.height)
+    );
+    seamCarvingFormData.set(
+      "crop_cols",
+      parseInt(width) - parseInt(crop.width)
+    );
     return seamCarvingFormData;
   }
 
