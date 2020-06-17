@@ -1,13 +1,13 @@
-import FormData from "form-data";
 import axios from "axios";
+import FormData from "form-data";
 
 export default class ImageResizeService {
   buildImageResizeModel({ file, dimensions, crop }) {
     const seamCarvingFormData = new FormData();
     const { width, height } = dimensions;
     seamCarvingFormData.set("image", file);
-    seamCarvingFormData.set("crop_rows", parseInt(width - crop.width));
-    seamCarvingFormData.set("crop_cols", parseInt(height - crop.height));
+    seamCarvingFormData.set("crop_rows", parseInt(50));
+    seamCarvingFormData.set("crop_cols", parseInt(150));
     return seamCarvingFormData;
   }
 
