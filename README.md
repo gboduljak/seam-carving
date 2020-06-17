@@ -66,20 +66,38 @@ def apply_sobel(image: array):
 
 ### The optimal seam algorithm
 
-We can solve the seam computation problem using dynamic programming by observing two important characteristics of the problem:
+For the sake of simplicity, we will consider only vertical seams in this discussion. Because of symmetry of the problem, we can argue in this way.
 
-- Optimal substructure
-  - Vertical seam case
-    - We claim that the least energy seam from the first row of the picture to the last row must contain in itself the least energy seam from the corresponding position in the second row to the last row.
-      - Proof: (By contradiction)
-        - Assume there is a path of smaller energy from the corresponding position in the second row to the last row. Let that path be **v**.
-  - Horizontal seam
-    - The observation and proof is analagous.
-- Overlapping subproblems
+<img src="./readme-resources/choices.png" alt="algorithm choices" style="zoom:50%;" />
 
-Since the problem satisfies above criteria, there is a natural recursive formula for the solution:
+We can solve the seam computation problem using dynamic programming after observing a key important characteristic of the problem:
 
-Now, observing that the topological ordering of problems is very simple, we can translate the above recursive formula directly into the bottom-up loop based implementation.
+- **Optimal substructure**
+
+  - We observe that the least energy seam from the some row of the picture to the last row must contain the least energy seam starting from some position in the next row and ending somewhere in the last row.
+
+  - **Claim**: Let p be the optimal seam starting from the position dp(i)(j) ending somewhere in the last row. For the sake of simplicity, assume that all three direct neighbours of dp(i)(j) shown above exist and they are in the image (we restrict neighbours as in the figure above). Assume, without loss of generality, that a next point in **p** is (i+1,j). Then a path **p'** starting from (i + 1, j) and ending somewhere in the last row must be a lowest energy path from (i + 1, j).
+
+    - **Proof**: (By contradiction)
+
+      Assume, for the sake of contradiction, that there exists a path **v'** starting from (i + 1, j) ) and ending somewhere in the last row but having the smaller energy than the path **p**. Now consider the path **w** starting from (i, j) and continuing from **v'**. Since **v'** has smaller energy than **p'**, we have that the energy of **w** is smaller than the energy of **p** and they both start from the same point (i, j). This contradicts the optimality of **p**. Therefore **p'** must be a lowest energy path from (i + 1, j). This completes the proof.
+
+- **Naive recursive solution**
+
+  - By the optimal substructure above, we know we can correctly determine the optimal seam from starting from (i,j) by considering all possible 'extensions' of a path starting from (i, j) and there are finitely many of them (at most 3). By examining all of them, we obtain a natural recursive solution of the problem.
+
+  - Let `dp[i][j]`be the cost of the least energy seam starting from the pixel at (i, j). Let `e[i][j]`be the energy of a pixel at position (i, j). Let m be the number of rows. Then
+
+    <img src="./readme-resources/dp.png" alt="algorithm choices"/>
+
+- **Overlapping subproblems**
+
+  - By inspection of the recursion tree obtained from the recursion above, we observe that many subproblems are overlapping. Moreover, they can be solved independently and only once.
+  - Along with the **Optimal substructure**, this property allows us to safely apply dynamic programming paradigm and we can implement the recursion above in either top-down or bottom-up way. Since images can be possibly large and Python does not handle recursion depth well, it is reasonable to pick bottom-up implementation in this case.
+
+Apart from just computing `dp[i][j]`for every subproblem, we store a choice made where to extend the path in the algorithm in `next_seam_position[i][j]`. We will use this to reconstruct the optimal seam.
+
+Now, after observing that the topological ordering of problems is very simple, we can translate the above recursive formula directly into the bottom-up loop based implementation.
 
 ```python
 
@@ -120,7 +138,43 @@ def compute_optimal_seam(energy):
 
 ```
 
-As a side note, I have decided to experiment with [Numba](http://numba.pydata.org/) library used to accelerate CPU intensive calculations by precompiling Python into a native code. I have receieved at least 30% speedup in compute*optimal_seam computation, but I had to sacrifice a bit on the side of code readability. Hence the algorithm implemented is possibly not the most \_pythonic*.
+**Informal complexity analysis**
+
+Let m, n be the number of rows and columns in the image matrix respectively. Then the number of distinct sub
+
+There are m \* n subproblems and solving each of those takes constant time. Therefore, both time and space complexity of this algorithm are theta m \* n .
+
+**Seam reconstruction**
+
+Having previously stored all choices made in a solution of each subproblem, we can reconstruct seams 'backwards' iteratively from computed values.
+
+```python
+@jit
+def trace_seam(mask, original_image, energy_image, seam_start, next_seam_position):
+    seam_pos = seam_start
+    while True:
+        row, col = seam_pos
+        mask[row][col] = 0
+        original_image[row][col] = (255, 0, 0)
+        energy_image[row][col] = (255, 0, 0)
+        if (next_seam_position[row][col] == 0):
+            break
+        if (next_seam_position[row][col] == DIAGONAL_LEFT):
+            seam_pos = (row + 1, col - 1)
+        elif (next_seam_position[row][col] == DIAGONAL_RIGHT):
+            seam_pos = (row + 1, col + 1)
+        else:
+            seam_pos = (row + 1, col)
+
+```
+
+As we iterate through the seam, we can mark the seam pixels in the original image and energy map to obtain visualisations such as:
+
+<img src="./readme-resources/energy-marked.jpeg" alt="energy marked" style="zoom:50%;" />
+
+<img src="./readme-resources/original-marked.jpeg" alt="energy marked" style="zoom:50%;" />
+
+As a side note, I have decided to experiment with [Numba](http://numba.pydata.org/) library used to accelerate CPU intensive calculations by precompiling Python into a native code. I have observed at least 30% speedup in compute optimal_seam computation but I had to sacrifice a bit on the side of code readability. Hence the algorithm implemented is possibly not the most _pythonic_.
 
 ## Some interesting results
 
@@ -133,3 +187,7 @@ As a side note, I have decided to experiment with [Numba](http://numba.pydata.or
 ## Project setup
 
 ...
+
+<script type="text/javascript" async
+
+src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
