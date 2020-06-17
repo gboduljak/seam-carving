@@ -3,9 +3,10 @@
 ### Table of Contents
 
 1. [Introduction](#introduction)
-2. [Some interesting results](#some-interesting-results)
-3. [A demo web app](#a-demo-web-app)
-4. [Project setup](#project-setup)
+2. [Algorithmic aspect](#algorithmic-aspect)
+3. [Some interesting results](#some-interesting-results)
+4. [A demo web app](#a-demo-web-app)
+5. [Project setup](#project-setup)
 
 ## Introduction
 
@@ -24,9 +25,21 @@ The algorithm is surprisingly simple, but remarkably elegant:
 
 Although S.Avidan and A.Shamir present various interesting applications of the seam carving, including object removal, image enlarging and content amplification, I have chosen to implement only the simplest operation - image resizing. However, object removal can be reduced to the problem of image resizing and I will consider this feature in future.
 
-## Implementation
+Link to the original research paper: [Seam carving for content-aware image resizing](https://dl.acm.org/doi/10.1145/1275808.1276390)
+
+## Algorithmic aspect
+
+Complete algorithm implementation is [here](https://github.com/gboduljak/seam-carving/blob/master/api/algorithm.py).
 
 ### Energy computation
+
+S.Avidan and A.Shamir stress the importance of energy function on the 'quality' of seams chosen. It is surprising that a very simple gradient magnitude often gives satisfactory results. I have decided to implement a similar function, with a bit of preprocessing.
+
+In terms of the implementation, I have decided to use **scipy's** built in **convole2d** which did a great job.
+
+Since the small (3x3) Sobel kernel is susceptible by noise, so I have decided to apply the small amount of Gaussian blur prior to the application of the Sobel operator. It is interesting to see even such a simple method gives generally satisfactory results.
+
+The implementation is given below:
 
 ```python
 sobel_kernels = {
@@ -63,12 +76,12 @@ def apply_sobel(image: array):
     return normalised_grad
 
 ```
+
 <img src="./readme-resources/original.jpeg" alt="algorithm choices" width=500 height=250 />
 <br/>
 <img src="./readme-resources/energy.jpeg" alt="algorithm choices" width=500 height=250/>
 The results of applying Sobel operator to the original image.
 <br/>
-Since the small (3x3) Sobel kernel is susceptible by noise, I have decided to apply the small amount of Gaussian blur prior to the application of the Sobel operator.
 
 ### The optimal seam algorithm
 
@@ -179,20 +192,74 @@ As we iterate through the seam, we can mark the seam pixels in the original imag
 
 <img src="./readme-resources/original-marked.jpeg" alt="original marked" width=600 height=400 />
 
-As a side note, I have decided to experiment with [Numba](http://numba.pydata.org/) library used to accelerate CPU intensive calculations by precompiling Python into a native code. I have observed at least 30% speedup in compute optimal_seam computation but I had to sacrifice a bit on the side of code readability. Hence the algorithm implemented is possibly not the most _pythonic_.
+As a side note, I have decided to experiment with [Numba](http://numba.pydata.org/) library used to accelerate CPU intensive calculations by precompiling Python into a native code. I have observed at least 30% speedup in compute optimal seam computation but I had to sacrifice a bit on the side of code readability. Hence the algorithm implemented is possibly not the most _pythonic_.
 
 ## Some interesting results
 
-...
+### Successfull
+
+#### Mountains
+
+<img src="./experiments/satisfying-results/mountains-medium/original-d346de04-9cfb-452c-a1da-0e6fd12579f9.jpeg" />
+**original**
+<img src="./experiments/satisfying-results/mountains-medium/marked-d346de04-9cfb-452c-a1da-0e6fd12579f9.jpeg" />
+**seams**
+<img src="./experiments/satisfying-results/mountains-medium/cropped-d346de04-9cfb-452c-a1da-0e6fd12579f9.jpeg" />
+**resized with seam carving**
+
+#### Lake
+
+<img src="./experiments/satisfying-results/nature/original-fcba79f4-d89a-4a35-8b26-e72f6b6665a0.jpeg" />
+**original**
+<img src="./experiments/satisfying-results/nature/marked-fcba79f4-d89a-4a35-8b26-e72f6b6665a0.jpeg" />
+**seams**
+<img src="./experiments/satisfying-results/nature/cropped-fcba79f4-d89a-4a35-8b26-e72f6b6665a0.jpeg" />
+**resized with seam carving**
+
+#### Tower
+
+<img src="./experiments/satisfying-results/tower-large/original-1463a82e-8e34-44e4-9e0d-20e1d01f3c55.jpeg" width="1428" height="968" />
+**original**
+<img src="./experiments/satisfying-results/tower-large/energy-marked-1463a82e-8e34-44e4-9e0d-20e1d01f3c55.jpeg"  width="1428" height="968"/>
+**seams**
+<img src="./experiments/satisfying-results/tower-large/cropped-1463a82e-8e34-44e4-9e0d-20e1d01f3c55.jpeg" width="1178" height="918" />
+**resized with seam carving**
+
+### Failures
+
+#### Basketball
+
+<img src="./experiments/failures/basketball/original-20f7b8bb-f943-4b66-bdea-62a7a7d90518.jpeg" />
+**original**
+<img src = "./experiments/failures/basketball/cropped-20f7b8bb-f943-4b66-bdea-62a7a7d90518.jpeg">
+**resized with seam carving**
+
+#### Mona Lisa
+
+The image environment is completely distorted, but the mysterious face still remains (almost) intact.
+<img src="./experiments/failures/monalisa/original-3e3f1402-e31e-4a0d-8bf5-6af069d51bdd.jpeg" />
+**original**
+<img src="./experiments/failures/monalisa/cropped-3e3f1402-e31e-4a0d-8bf5-6af069d51bdd.jpeg" />
+**resized with seam carving**
 
 ## A demo web app
 
-...
+<img src="./readme-resources/app-screenshot-1.png" width="600" />
+<img src="./readme-resources/app-screenshot-2.png" width="600" />
+
+There are two projects required to run a demo app:
+
+- **api**
+  - This is a simple rest api exposing the resizing algorithm through REST endpoint /resize. The framework used to build it is Flask.
+- **web**
+  - This is a demo application written in React. It communicates with the api and all resizing is done one the server side.
+- It is used to select an image and choose new dimensions. After that application sends the request to the api which does the processing. It is possible to view cropped image, energy map and computed seams for every image.
 
 ## Project setup
 
-...
+It is required to have Python3 (either virtualenv, pyenv or globally) and node installed.
 
-<script type="text/javascript" async
-
-src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+1. Run setup.sh which installs all required packages and does environment setup for both api and web.
+2. Run run_api.sh which runs the api in development environment.
+3. Run run_web.sh which runs the web in development environment.
+4. Do some seam carving :)
