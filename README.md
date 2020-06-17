@@ -68,7 +68,7 @@ def apply_sobel(image: array):
 
 For the sake of simplicity, we will consider only vertical seams in this discussion. Because of symmetry of the problem, we can argue in this way.
 
-<img src="./readme-resources/choices.png" alt="algorithm choices" style="zoom:50%;" />
+<img src="./readme-resources/choices.png" alt="algorithm choices" width=250 height=250 />
 
 We can solve the seam computation problem using dynamic programming after observing a key important characteristic of the problem:
 
@@ -88,7 +88,7 @@ We can solve the seam computation problem using dynamic programming after observ
 
   - Let `dp[i][j]`be the cost of the least energy seam starting from the pixel at (i, j). Let `e[i][j]`be the energy of a pixel at position (i, j). Let m be the number of rows. Then
 
-    <img src="./readme-resources/dp.png" alt="algorithm choices"/>
+    <img src="./readme-resources/dp.png" alt="algorithm choices" center />
 
 - **Overlapping subproblems**
 
@@ -170,9 +170,9 @@ def trace_seam(mask, original_image, energy_image, seam_start, next_seam_positio
 
 As we iterate through the seam, we can mark the seam pixels in the original image and energy map to obtain visualisations such as:
 
-<img src="./readme-resources/energy-marked.jpeg" alt="energy marked" style="zoom:50%;" />
+<img src="./readme-resources/energy-marked.jpeg" alt="energy marked" width=600 height=400 />
 
-<img src="./readme-resources/original-marked.jpeg" alt="energy marked" style="zoom:50%;" />
+<img src="./readme-resources/original-marked.jpeg" alt="original marked" width=600 height=400 />
 
 As a side note, I have decided to experiment with [Numba](http://numba.pydata.org/) library used to accelerate CPU intensive calculations by precompiling Python into a native code. I have observed at least 30% speedup in compute optimal_seam computation but I had to sacrifice a bit on the side of code readability. Hence the algorithm implemented is possibly not the most _pythonic_.
 
