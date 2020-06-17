@@ -1,4 +1,3 @@
-# pyenv virtualenv context-aware-resizing
 numpy
 scipy
 matplotlib
