@@ -201,28 +201,42 @@ As a side note, I have decided to experiment with [Numba](http://numba.pydata.or
 #### Mountains
 
 <img src="./experiments/satisfying-results/mountains-medium/original-d346de04-9cfb-452c-a1da-0e6fd12579f9.jpeg" />
+
 **original**
+
 <img src="./experiments/satisfying-results/mountains-medium/marked-d346de04-9cfb-452c-a1da-0e6fd12579f9.jpeg" />
+
 **seams**
+
 <img src="./experiments/satisfying-results/mountains-medium/cropped-d346de04-9cfb-452c-a1da-0e6fd12579f9.jpeg" />
+
 **resized with seam carving**
 
 #### Lake
 
 <img src="./experiments/satisfying-results/nature/original-fcba79f4-d89a-4a35-8b26-e72f6b6665a0.jpeg" />
+
 **original**
 <img src="./experiments/satisfying-results/nature/marked-fcba79f4-d89a-4a35-8b26-e72f6b6665a0.jpeg" />
+
 **seams**
+
 <img src="./experiments/satisfying-results/nature/cropped-fcba79f4-d89a-4a35-8b26-e72f6b6665a0.jpeg" />
+
 **resized with seam carving**
 
 #### Tower
 
 <img src="./experiments/satisfying-results/tower-large/original-1463a82e-8e34-44e4-9e0d-20e1d01f3c55.jpeg" width="1428" height="968" />
+
 **original**
+
 <img src="./experiments/satisfying-results/tower-large/energy-marked-1463a82e-8e34-44e4-9e0d-20e1d01f3c55.jpeg"  width="1428" height="968"/>
+
 **seams**
+
 <img src="./experiments/satisfying-results/tower-large/cropped-1463a82e-8e34-44e4-9e0d-20e1d01f3c55.jpeg" width="1178" height="918" />
+
 **resized with seam carving**
 
 ### Failures
@@ -230,16 +244,26 @@ As a side note, I have decided to experiment with [Numba](http://numba.pydata.or
 #### Basketball
 
 <img src="./experiments/failures/basketball/original-20f7b8bb-f943-4b66-bdea-62a7a7d90518.jpeg" />
+
 **original**
-<img src = "./experiments/failures/basketball/cropped-20f7b8bb-f943-4b66-bdea-62a7a7d90518.jpeg">
+<br/>
+
+<img src="./experiments/failures/basketball/cropped-20f7b8bb-f943-4b66-bdea-62a7a7d90518.jpeg">
+
 **resized with seam carving**
 
 #### Mona Lisa
 
 The image environment is completely distorted, but the mysterious face still remains (almost) intact.
+
 <img src="./experiments/failures/monalisa/original-3e3f1402-e31e-4a0d-8bf5-6af069d51bdd.jpeg" />
+
 **original**
+
+<br/>
+
 <img src="./experiments/failures/monalisa/cropped-3e3f1402-e31e-4a0d-8bf5-6af069d51bdd.jpeg" />
+
 **resized with seam carving**
 
 ## A demo web app
