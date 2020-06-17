@@ -37,7 +37,7 @@ S.Avidan and A.Shamir stress the importance of energy function on the 'quality' 
 
 In terms of the implementation, I have decided to use **scipy's** built in **convole2d** which did a great job.
 
-Since the small (3x3) Sobel kernel is susceptible by noise, so I have decided to apply the small amount of Gaussian blur prior to the application of the Sobel operator. It is interesting to see even such a simple method gives generally satisfactory results.
+Since the small (3x3) Sobel kernel is susceptible to noise, so I have decided to apply the small amount of Gaussian blur prior to the application of the Sobel operator. It is interesting to see even such a simple method gives generally satisfactory results.
 
 The implementation is given below:
 
