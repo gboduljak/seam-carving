@@ -228,15 +228,15 @@ As a side note, I have decided to experiment with [Numba](http://numba.pydata.or
 
 #### Tower
 
-<img src="./experiments/satisfying-results/tower-large/original-1463a82e-8e34-44e4-9e0d-20e1d01f3c55.jpeg" width=1428 height="968 />
+<img src="./experiments/satisfying-results/tower-large/original-1463a82e-8e34-44e4-9e0d-20e1d01f3c55.jpeg" width=1428 height=968 />
 
 **original**
 
-<img src="./experiments/satisfying-results/tower-large/energy-marked-1463a82e-8e34-44e4-9e0d-20e1d01f3c55.jpeg"  width=1428 height=968/>
+<img src="./experiments/satisfying-results/tower-large/energy-marked-1463a82e-8e34-44e4-9e0d-20e1d01f3c55.jpeg" width=1428 height=968/>
 
 **seams**
 
-<img src="./experiments/satisfying-results/tower-large/cropped-1463a82e-8e34-44e4-9e0d-20e1d01f3c55.jpeg" width=1178 height=918 />
+<img src="./experiments/satisfying-results/tower-large/cropped-1463a82e-8e34-44e4-9e0d-20e1d01f3c55.jpeg" width=1178 height=918 />
 
 **resized with seam carving**
 
