@@ -19,7 +19,7 @@ The algorithm is surprisingly simple, but remarkably elegant:
 1. Calculate the energy metric of each pixel.
    There are numerous methods covering this topic. The most popular approaches are **gradient magnitude**, **entropy**, **visual saliency map**, **eye-gaze movement**... I have chosen to approximate **gradient magnitude** by using a well known convolution **Sobel operator (3x3)**. This is a discrete differentiation operator usually used as a step in edge detection problem. [Learn more about Sobel here](https://en.wikipedia.org/wiki/sobel_operator)
 2. Having computed the energy metric, find the lowest energy horizontal or vertical path - seam.
-   This problem reduced to the shortest path problem solvable by many algorithms (Dijkstra's algorithm, Bellman-Ford...), but there is a beautiful and optimal dynamic programming solution I have decided to implement.
+   This problem can be reduced to the shortest path problem which is solvable by many graph algorithms (Dijkstra's algorithm, Bellman-Ford...), but there is a beautiful and optimal dynamic programming solution.
    It is interesting to note I have recently encountered [a surprisingly similar programming interview problem](https://leetcode.com/problems/minimum-path-sum/) solving exactly 'the lowest energy' problem.
 3. Remove the lowest energy seam from the image
 
@@ -37,7 +37,7 @@ S.Avidan and A.Shamir stress the importance of energy function on the 'quality' 
 
 In terms of the implementation, I have decided to use **scipy's** built in **convole2d** which did a great job.
 
-Since the small (3x3) Sobel kernel is susceptible to noise, so I have decided to apply the small amount of Gaussian blur prior to the application of the Sobel operator. It is interesting to see even such a simple method gives generally satisfactory results.
+Prior to any computation, we convert the original image into grayscale. Since the small (3x3) Sobel kernel is susceptible to noise, I have decided to apply the small amount of Gaussian blur prior to the application of the Sobel operator. It is interesting to see even such a simple method gives generally satisfactory results.
 
 The implementation is given below:
 
@@ -61,10 +61,6 @@ gaussian_kernel = (1/16) * array([
     [1, 2, 1]
 ])
 
-DIAGONAL = numpy.intp(1)
-DOWN = numpy.intp(2)
-
-
 def apply_sobel(image: array):
     blurred = convolve2d(image, gaussian_kernel, mode='same', boundary='symm')
     grad_x = convolve2d(
@@ -85,11 +81,11 @@ The results of applying Sobel operator to the original image.
 
 ### The optimal seam algorithm
 
-For the sake of simplicity, we will consider only vertical seams in this discussion. Because of symmetry of the problem, we can argue in this way.
+For the sake of simplicity, we will consider only vertical seams in this discussion. By the symmetry of the problem, we can argue in this way.
 
 <img src="./readme-resources/choices.png" alt="algorithm choices" width=250 height=250 />
 
-We can solve the seam computation problem using dynamic programming after observing an important characteristic of the problem:
+We can solve the seam computation problem using dynamic programming due to an important characteristic of the problem:
 
 - **Optimal substructure**
 
@@ -103,7 +99,7 @@ We can solve the seam computation problem using dynamic programming after observ
 
 - **Naive recursive solution**
 
-  - By the optimal substructure above, we know we can correctly determine the optimal seam from starting from (i,j) by considering all possible 'extensions' of a path starting from (i, j) and there are finitely many of them (at most 3). By examining all of them, we obtain a natural recursive solution of the problem.
+  - By the optimal substructure above, we know we can correctly determine the optimal seam from starting from (i,j) by considering all possible 'extensions' of a path starting from (i, j) and there are finitely many of them (at most 3). By examining all of them, we obtain a natural recursive solution of the problem which is optimal by exhaustion.
 
   - Let `dp[i][j]`be the cost of the least energy seam starting from the pixel at (i, j). Let `e[i][j]`be the energy of a pixel at position (i, j). Let m be the number of rows. Then
 
@@ -112,11 +108,11 @@ We can solve the seam computation problem using dynamic programming after observ
 - **Overlapping subproblems**
 
   - By inspection of the recursion tree obtained from the recursion above, we observe that many subproblems are overlapping. Moreover, they can be solved independently and only once.
-  - Along with the **Optimal substructure**, this property allows us to safely apply dynamic programming paradigm and we can implement the recursion above in either top-down or bottom-up way. Since images can be possibly large and Python does not handle recursion depth well, it is reasonable to pick bottom-up implementation in this case.
+  - Along with the **Optimal substructure**, this property allows us to safely apply dynamic programming paradigm and we can implement the recursion above in either top-down or bottom-up way. Since images can be possibly large and Python does not handle 'deep' recursion very well, it is reasonable to pick bottom-up implementation.
 
-Apart from just computing `dp[i][j]`for every subproblem, we store a choice made where to extend the path in the algorithm in `next_seam_position[i][j]`. We will use this to reconstruct the optimal seam.
+Apart from just computing `dp[i][j]`for every subproblem, we store a choice made where to extend the path in `next_seam_position[i][j]`. We will use this matrix to reconstruct the optimal seam.
 
-Now, after observing that the topological ordering of problems is very simple, we can translate the above recursive formula directly into the bottom-up loop based implementation.
+Now, since the topological ordering of problems is very simple, we can translate the above recursive formula into the following bottom-up loop based implementation.
 
 ```python
 @jit
