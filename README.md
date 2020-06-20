@@ -37,7 +37,7 @@ S.Avidan and A.Shamir stress the importance of energy function on the 'quality' 
 
 In terms of the implementation, I have decided to use **scipy's** built in **convolve2d** which did a great job.
 
-Prior to any computation, we convert the original image into grayscale. Since the small (3x3) Sobel kernel is susceptible to noise, I have decided to apply the small amount of Gaussian blur prior to the application of the Sobel operator. It is interesting to see even such a simple method gives generally satisfactory results.
+Prior to any computation, we convert the original image into grayscale. Since the small (3x3) Sobel kernel is susceptible to noise, I have decided to apply the small amount of Gaussian blur prior to the application of the Sobel operator. It is interesting to see that such a simple method gives generally satisfactory results.
 
 The implementation is given below:
 
@@ -95,7 +95,7 @@ We can solve the seam computation problem using dynamic programming due to an im
 
     - **Proof**: (By contradiction)
 
-      Assume, for the sake of contradiction, that there exists a path **v'** starting from (i + 1, j) ) and ending somewhere in the last row but having the smaller energy than the path **p**. Now consider the path **w** starting from (i, j) and continuing from **v'**. Since **v'** has smaller energy than **p'**, we have that the energy of **w** is smaller than the energy of **p** and they both start from the same point (i, j). This contradicts the optimality of **p**. Therefore **p'** must be a lowest energy path from (i + 1, j). This completes the proof.
+      Assume, for the sake of contradiction, that there exists a path **v'** starting from (i + 1, j) and ending somewhere in the last row but having the smaller energy than the path **p**. Now consider the path **w** starting from (i, j) and continuing from **v'**. Since **v'** has smaller energy than **p'**, we have that the energy of **w** is smaller than the energy of **p** and they both start from the same point (i, j). This contradicts the optimality of **p**. Therefore **p'** must be a lowest energy path from (i + 1, j). This completes the proof.
 
 - **Naive recursive solution**
 
