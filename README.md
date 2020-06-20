@@ -35,7 +35,7 @@ Complete algorithm implementation is [here](https://github.com/gboduljak/seam-ca
 
 S.Avidan and A.Shamir stress the importance of energy function on the 'quality' of seams chosen. It is surprising that a very simple gradient magnitude often gives satisfactory results. I have decided to implement a similar function, with a bit of preprocessing.
 
-In terms of the implementation, I have decided to use **scipy's** built in **convole2d** which did a great job.
+In terms of the implementation, I have decided to use **scipy's** built in **convolve2d** which did a great job.
 
 Prior to any computation, we convert the original image into grayscale. Since the small (3x3) Sobel kernel is susceptible to noise, I have decided to apply the small amount of Gaussian blur prior to the application of the Sobel operator. It is interesting to see even such a simple method gives generally satisfactory results.
 
